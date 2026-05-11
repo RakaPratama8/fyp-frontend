@@ -12,7 +12,7 @@ interface SearchProps {
 
 export default function Search({ token, onLogout }: SearchProps) {
   const [query, setQuery] = useState('');
-  const [years, setYears] = useState(5);
+  const [years, setYears] = useState<number | string>(5);
   const [results, setResults] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -27,7 +27,7 @@ export default function Search({ token, onLogout }: SearchProps) {
     
     try {
       const res = await axios.get(`${API_URL}/api/v1/search`, {
-        params: { q: query, years, limit: 10 },
+        params: { q: query, years: Number(years) || 5, limit: 10 },
         headers: { Authorization: `Bearer ${token}` }
       });
       setResults(res.data.results || []);
@@ -72,7 +72,7 @@ export default function Search({ token, onLogout }: SearchProps) {
             value={years}
             min={1}
             max={50}
-            onChange={(e) => setYears(parseInt(e.target.value) || 5)}
+            onChange={(e) => setYears(e.target.value === '' ? '' : parseInt(e.target.value))}
             title="Years looking back"
           />
           <button type="submit" className="search-submit" disabled={loading}>
